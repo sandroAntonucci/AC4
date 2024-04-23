@@ -6,6 +6,7 @@ namespace AC3
 {
     public static class Helper
     {
+
         // Crea una llista d'objectes consumAigua des de l'arxiu CSV
         public static List<ConsumAigua> GetCSV(string path)
         {
@@ -58,6 +59,7 @@ namespace AC3
                 using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                 {
                     csv.WriteRecord(consum);
+                    csv.NextRecord();
                 }
             }
         }

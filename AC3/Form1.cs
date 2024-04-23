@@ -28,9 +28,12 @@ namespace AC3
         // S'executa al carregar el formulari
         private void Form1_Load(object sender, EventArgs e)
         {
-            // S'agafen les dades del csv
-            List<ConsumAigua> consumAigua = Helper.GetCSV(CsvPath);
 
+            // S'obtenen les dades de la base de dades
+
+            ConsumDAO consumDAO = new ConsumDAO(NpgsqlUtils.OpenConnection());
+            List<ConsumAigua> consumAigua = consumDAO.GetAllConsums();
+            
             // Es guarden les comarques en un fitxer xml
             Helper.ConvertToXML(consumAigua);
 
@@ -85,9 +88,12 @@ namespace AC3
                 //Cons dom per capita major de tots si o no
                 float consDomPerCapita = Convert.ToSingle(dataGridView1.SelectedRows[Zero].Cells[Seven].Value);
 
+
+                ConsumDAO consumDAO = new ConsumDAO(NpgsqlUtils.OpenConnection());
+
                 // S'actualitza el consum màxim i mínim
-                float maxConsCap = Helper.GetMaxConsum(Helper.GetCSV(CsvPath));
-                float minConsCap = Helper.GetMinConsum(Helper.GetCSV(CsvPath));
+                float maxConsCap = Helper.GetMaxConsum(consumDAO.GetAllConsums());
+                float minConsCap = Helper.GetMinConsum(consumDAO.GetAllConsums());
 
                 lblConsCapMax.Text = consDomPerCapita == maxConsCap ? Yes : No;
                 lblConsCapLow.Text = consDomPerCapita == minConsCap ? Yes : No;
@@ -167,10 +173,12 @@ namespace AC3
 
                 errorProvider1.Clear();
 
+                ConsumDAO consumDAO = new ConsumDAO(NpgsqlUtils.OpenConnection());
+
                 ConsumAigua consumAigua = new ConsumAigua
                 {
                     Any = Convert.ToInt32(cmbYear.Text),
-                    CodiComarca = Helper.GetCodiComarca(Helper.GetCSV(CsvPath), cmbComarca.Text),
+                    CodiComarca = Helper.GetCodiComarca(consumDAO.GetAllConsums(), cmbComarca.Text),
                     Comarca = cmbComarca.Text,
                     Poblacio = pob,
                     DomXarxa = domXarx,
@@ -178,6 +186,8 @@ namespace AC3
                     Total = total,
                     ConsDomPerCapita = consDomPerCap
                 };
+
+                consumDAO.AddConsum(consumAigua);
 
                 Helper.AddToCsv(CsvPath, consumAigua);
 

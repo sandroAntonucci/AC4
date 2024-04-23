@@ -1,13 +1,12 @@
-﻿using System;
-using CsvHelper.Configuration.Attributes;
+﻿using CsvHelper.Configuration.Attributes;
 
 namespace AC3
 {
     public class ConsumAigua
     {
-
+        [Name("Id")]
+        public int Id { get; set; }
         public int Any { get; set; }
-
         [Name("Codi comarca")]
         public int CodiComarca { get; set; }
         [Name("Comarca")]
